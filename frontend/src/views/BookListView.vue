@@ -19,14 +19,23 @@
                 <p>
                     Emplacement : {{ book.location }}
                 </p>
-                <p v-if="book.available">
+                <p>
+                    Exemplaires : {{ book.copies }}
+                </p>
+
+                <p v-if="book.copies > 0 && !book.reserved">
                     Disponible
                 </p>
-                <p v-else>
+
+                <p v-if="book.copies === 0 && !book.reserved">
                     Indisponible
                 </p>
 
-                <button v-if="book.available" @click="reserveBook(book.id)">
+                <p v-if="book.reserved">
+                    Réservé
+                </p>
+
+                <button v-if="book.copies > 0 && !book.reserved" @click="reserveBook(book.id)">
                     Réserver
                 </button>
             </div>
@@ -58,10 +67,24 @@
                 }
             },
 
-            reserveBook(bookId) {
-                console.log("Réserver livre:", bookId);
-                // TODO: appel API réservation
-            },
+            async reserveBook(bookId) {
+                try {
+                    const res = await fetch(`http://localhost:5000/reserve/${bookId}`, {
+                        method: "POST",
+                    });
+
+                    const updatedBook = await res.json();
+
+                    this.books = this.books.map(b =>
+                        b.id === updatedBook.id
+                            ? { ...updatedBook, reserved: true }
+                            : b
+                    );
+
+                } catch (e) {
+                    console.error("Erreur réservation:", e);
+                }
+            }
         },
     };
 </script>

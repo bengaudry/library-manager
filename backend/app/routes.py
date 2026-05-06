@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from .models import db, Books
+from .models import db, Books, User
 from .auth import is_username_and_password_correct, create_or_replace_session_for_user, delete_session, verify_session
 
 api = Blueprint('api', __name__)
@@ -14,7 +14,7 @@ def get_books():
 def get_book(book_id):
     book = db.session.query(Books).get(book_id)
     if book is None:
-        return jsonify({"error": "Livre non trouvé"}), 404
+        return jsonify({"error": "Livre non trouve"}), 404
     return jsonify(book.to_dict())
 
 @api.route('/books', methods=['POST'])
@@ -59,18 +59,18 @@ def register_user():
     if not data or not data.get('username') or not data.get('email') or not data.get('password'):
         return jsonify({"erreur": "Veuillez remplir tout le formulaire !"}), 400
 
-    # Vérifie si l'email n'est pas déjà lié à un compte
+    # Verifie si l'email n'est pas deja lie a un compte
     existing_email = User.query.filter_by(email=data['email']).first()
     if existing_email:
-        return jsonify({"erreur": "L'e-mail est déjà lié à un compte !'"}), 400
+        return jsonify({"erreur": "L'e-mail est deja lie a un compte !'"}), 400
 
-    # Vérifie si le nom d'utilisateur n'est pas déjà utilisé
+    # Verifie si le nom d'utilisateur n'est pas deja utilise
     existing_username = User.query.filter_by(username=data['username']).first()
     if existing_username:
-        return jsonify({"erreur": "Le nom d'utilisateur est déjà utilisé !"}), 400
+        return jsonify({"erreur": "Le nom d'utilisateur est deja utilise !"}), 400
 
-    # Création du nouvel utilisateur
+    # Creation du nouvel utilisateur
     new_user = User(username=data['username'], email=data['email'], password=data['password'])
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "Utilisateur créé avec succès !", "user": new_user.to_dict()}), 201
+    return jsonify({"message": "Utilisateur cree avec succes !", "user": new_user.to_dict()}), 201

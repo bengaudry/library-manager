@@ -30,8 +30,4 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String(256), nullable=False)
 
     def to_dict(self):
-    return {
-        "id": self.id
-        "username": username
-        "email": email
-    }
+        return {"id": self.id, "username": self.username, "email": self.email}

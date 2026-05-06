@@ -14,7 +14,7 @@ def get_books():
 def get_book(book_id):
     book = db.session.query(Books).get(book_id)
     if book is None:
-        return jsonify({"error": "Livre non trouvÃ©"}), 404
+        return jsonify({"error": "Livre non trouvé"}), 404
     return jsonify(book.to_dict())
 
 @api.route('/books', methods=['POST'])
@@ -50,3 +50,27 @@ def logout(token):
         return jsonify({"success": "you are logged out"}), 200
     else:
         return jsonify({"error": "Incorrect token"}), 401
+
+@api.route('/register', methods=['POST'])
+def register_user():
+    data = request.get_json()
+
+    # Informations manquantes
+    if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+        return jsonify({"erreur": "Veuillez remplir tout le formulaire !"}), 400
+
+    # Vérifie si l'email n'est pas déjà lié à un compte
+    existing_email = User.query.filter_by(email=data['email']).first()
+    if existing_email:
+        return jsonify({"erreur": "L'e-mail est déjà lié à un compte !'"}), 400
+
+    # Vérifie si le nom d'utilisateur n'est pas déjà utilisé
+    existing_username = User.query.filter_by(username=data['username']).first()
+    if existing_username:
+        return jsonify({"erreur": "Le nom d'utilisateur est déjà utilisé !"}), 400
+
+    # Création du nouvel utilisateur
+    new_user = User(username=data['username'], email=data['email'], password=data['password'])
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"message": "Utilisateur créé avec succès !", "user": new_user.to_dict()}), 201

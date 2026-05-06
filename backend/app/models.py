@@ -20,4 +20,18 @@ class Books(db.Model):
         }
 
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, title={self.title!r}, author={self.author!r})"
+        return f"Books(id={self.id!r}, title={self.title!r}, author={self.author!r})"
+
+class User(db.Model):
+    __tablename__ = "user"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(256), nullable=False)
+
+    def to_dict(self):
+    return {
+        "id": self.id
+        "username": username
+        "email": email
+    }

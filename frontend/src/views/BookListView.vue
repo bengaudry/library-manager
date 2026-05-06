@@ -16,26 +16,30 @@
                 <p>
                     Auteur : {{ book.author }}
                 </p>
+
                 <p>
-                    Emplacement : {{ book.location }}
-                </p>
-                <p>
-                    Exemplaires : {{ book.copies }}
+                    Emplacement : {{ book.position }}
                 </p>
 
-                <p v-if="book.copies > 0 && !book.reserved">
-                    Disponible
-                </p>
-
-                <p v-if="book.copies === 0 && !book.reserved">
-                    Indisponible
+                <p>
+                    Exemplaires : {{ book.exemplars }}
                 </p>
 
                 <p v-if="book.reserved">
                     Réservé
                 </p>
 
-                <button v-if="book.copies > 0 && !book.reserved" @click="reserveBook(book.id)">
+                <p v-else-if="book.exemplars > 0">
+                    Disponible
+                </p>
+
+                <p v-else>
+                    Indisponible
+                </p>
+
+                <button 
+                    v-if="book.exemplars > 0 && !book.reserved"
+                    @click="reserveBook(book.id)">
                     Réserver
                 </button>
             </div>
@@ -59,8 +63,10 @@
             async fetchBooks() {
                 try {
                     const res = await fetch("http://localhost:5000/books");
-                    this.books = await res.json();
-                } catch (e) {
+                    this.books = (await res.json()).map(b => ({
+                        ...b,
+                        reserved: false
+                    }));                } catch (e) {
                     console.error("Erreur API:", e);
                 } finally {
                     this.loading = false;
@@ -70,13 +76,19 @@
             async reserveBook(bookId) {
                 try {
                     const res = await fetch(`http://localhost:5000/reserve/${bookId}`, {
-                        method: "POST",
+                        method: "POST"
                     });
+
+                    if (!res.ok) {
+                        const err = await res.json();
+                        alert(err.error);
+                        return;
+                    }
 
                     const updatedBook = await res.json();
 
                     this.books = this.books.map(b =>
-                        b.id === updatedBook.id
+                        b.id === bookId
                             ? { ...updatedBook, reserved: true }
                             : b
                     );

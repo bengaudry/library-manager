@@ -16,7 +16,9 @@ class Books(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "author": self.author
+            "author": self.author,
+            "exemplars": self.exemplars,
+            "position": self.position
         }
 
     def __repr__(self) -> str:

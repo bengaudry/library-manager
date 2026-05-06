@@ -20,10 +20,10 @@
                     Emplacement : {{ book.location }}
                 </p>
                 <p v-if="book.available">
-                    ✅ Disponible
+                    Disponible
                 </p>
                 <p v-else>
-                    ❌ Indisponible
+                    Indisponible
                 </p>
 
                 <button v-if="book.available" @click="reserveBook(book.id)">

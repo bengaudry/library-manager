@@ -11,7 +11,7 @@
 
   const handleRegister = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/register', {
+      const response = await fetch('http://localhost:5000/backend/app/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form.value)
@@ -21,7 +21,6 @@
       message.value = result.message
 
       if (response.ok) {
-        // Redirection ou nettoyage du formulaire
         form.value = { username: '', email: '', password: '' }
       }
     } catch (error) {
@@ -33,6 +32,9 @@
 <template>
     <div class="register-container">
       <h1>Inscription</h1>
+
+      <router-link to="/">Retour</router-link>
+
       <form @submit.prevent="handleRegister">
         <input v-model="form.username" type="text" placeholder="Nom d'utilisateur" required />
         <input v-model="form.email" type="email" placeholder="Email" required />
@@ -46,5 +48,18 @@
 </template>
 
 <style scoped>
+    input {
+        display: block;
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
 
+    button {
+        background-color: green;
+        color: white;
+        width: 10%;
+        height: 25px;
+        border: 0px;
+    }
 </style>

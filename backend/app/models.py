@@ -9,6 +9,8 @@ class Books(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(80))
     author: Mapped[str] = mapped_column(String(80))
+    exemplars: Mapped[int] = mapped_column(default=1)
+    position: Mapped[str] = mapped_column(String(80))
 
     def to_dict(self):
         return {

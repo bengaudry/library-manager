@@ -25,7 +25,7 @@ def add_book():
     db.session.commit()
     return jsonify(new_book.to_dict()), 201
 
-@api.route('/login', methods=['POST'])
+@api.route('/sessions', methods=['POST'])
 def login():
     data = request.get_json()
     user_name=data['user_name']
@@ -36,10 +36,15 @@ def login():
     else:
         return jsonify({"error": "Incorrect username or password"}), 401
 
-@api.route('/logout', methods=['POST'])
-def login():
-    data = request.get_json()
-    token=data['token']
+@api.route('/sessions/<int:token>', methods=['GET'])
+def verify_token(token):
+    if verify_session(token):
+        return jsonify({"success": "you are logged in"}), 200
+    else:
+        return jsonify({"error": "Incorrect token"}), 401
+
+@api.route('/sessions/<int:token>', methods=['DELETE'])
+def logout(token):
     if verify_session(token):
         delete_session(token)
         return jsonify({"success": "you are logged out"}), 200

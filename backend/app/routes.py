@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .models import db, Books
+from .auth import is_username_and_password_correct, create_or_replace_session_for_user, delete_session, verify_session
 
 api = Blueprint('api', __name__)
 
@@ -23,3 +24,24 @@ def add_book():
     db.session.add(new_book)
     db.session.commit()
     return jsonify(new_book.to_dict()), 201
+
+@api.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user_name=data['user_name']
+    password = data['password']
+    if is_username_and_password_correct(user_name, password): # Si username et mot de passe sont correct
+        token = create_or_replace_session_for_user(user_name)
+        return jsonify({"token": token}), 200
+    else:
+        return jsonify({"error": "Incorrect username or password"}), 401
+
+@api.route('/logout', methods=['POST'])
+def login():
+    data = request.get_json()
+    token=data['token']
+    if verify_session(token):
+        delete_session(token)
+        return jsonify({"success": "you are logged out"}), 200
+    else:
+        return jsonify({"error": "Incorrect token"}), 401

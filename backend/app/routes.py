@@ -11,7 +11,7 @@ def get_books():
 @api.route('/books', methods=['POST'])
 def add_book():
     data = request.get_json()
-    new_book = Books(title=data['title'], author=data['author'])
+    new_book = Books(title=data['title'], author=data['author'], position=data['position'], exemplars=data['exemplars'])
     db.session.add(new_book)
     db.session.commit()
     return jsonify(new_book.to_dict()), 201

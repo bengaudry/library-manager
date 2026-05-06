@@ -30,10 +30,17 @@
 </script>
 
 <template>
+
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><router-link to="/">Accueil</router-link></li>
+            <li><router-link to="/lecteur/inscription">Inscription</router-link></li>
+            <li><router-link to="/lecteur/inscription">Connexion</router-link></li>
+        </ul>
+    </nav>
+
     <div class="register-container">
       <h1>Inscription</h1>
-
-      <router-link to="/">Retour</router-link>
 
       <form @submit.prevent="handleRegister">
         <input v-model="form.username" type="text" placeholder="Nom d'utilisateur" required />
@@ -61,5 +68,21 @@
         width: 10%;
         height: 25px;
         border: 0px;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      color: black;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
     }
 </style>
